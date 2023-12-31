@@ -1,0 +1,22 @@
+plugins {
+    id("application")
+}
+
+version = "0.1"
+group = "net.sammy"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+}
+
+application {
+    mainClass.set("net.sammy.Application")
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
