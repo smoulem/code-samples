@@ -1,0 +1,70 @@
+plugins {
+    id("application")
+    id("org.flywaydb.flyway") version("10.4.0")
+    id ("nu.studer.jooq") version("9.0")
+}
+
+version = "0.1"
+group = "net.sammy"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("com.h2database:h2:2.2.220")
+    jooqGenerator("com.h2database:h2:2.2.220")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+}
+
+application {
+    mainClass.set("net.sammy.Application")
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
+}
+
+test {
+    useJUnitPlatform()
+}
+
+flyway {
+    url = 'jdbc:h2:file:~/.h2Databases/testDB'
+    user = 'sa'
+    locations = ['filesystem:db/migration']
+}
+
+jooq {
+    configurations {
+        main {
+            generationTool {
+                jdbc {
+                    driver = 'org.h2.Driver'
+                    url = 'jdbc:h2:file:~/.h2Databases/testDB'
+                    user = 'sa'
+                    password = ''
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.h2.H2Database'
+                        inputSchema = 'PUBLIC'
+                    }
+                    generate {
+                        deprecated = false
+                        records = true
+                        immutablePojos = true
+                        fluentSetters = true
+                    }
+                    target {
+                        packageName = 'net.sammy'
+                        directory = 'build/generated-src/jooq/main'
+                    }
+                }
+            }
+        }
+    }
+}
